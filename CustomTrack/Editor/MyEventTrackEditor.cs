@@ -1,0 +1,40 @@
+using UnityEngine;
+using UnityEditor;
+using UnityEditor.Timeline;
+using UnityEngine.Timeline;
+
+namespace mixyaoCustomTimeLineForGJ2024
+{
+    [CustomTimelineEditor(typeof(MyEventTrack))]
+    public class MyEventTrackEditor : TrackEditor
+    {
+        public override TrackDrawOptions GetTrackOptions(TrackAsset track, UnityEngine.Object binding)
+        {
+            var options = base.GetTrackOptions(track, binding);
+            MyEventTrack myTrack = track as MyEventTrack;
+
+            if (myTrack != null && myTrack.trackSettings != null)
+            {
+                // Use the custom track color
+                options.trackColor = myTrack.trackSettings.trackColor;
+
+                // Load the track icon from Resources
+                if (myTrack.trackSettings.trackIcon == null &&
+                    !string.IsNullOrEmpty(myTrack.trackSettings.trackIconPath))
+                {
+                    myTrack.trackSettings.trackIcon = Resources.Load<Texture2D>(myTrack.trackSettings.trackIconPath);
+                }
+
+                options.icon = myTrack.trackSettings.trackIcon;
+            }
+
+            return options;
+        }
+
+        public override void OnCreate(TrackAsset track, TrackAsset copiedFrom)
+        {
+            track.name = "MyEventTrack";
+            base.OnCreate(track, copiedFrom);
+        }
+    }
+}
